@@ -1,27 +1,279 @@
-#container {
+/* --- GLOBAL APP VARIABLES --- */
+:host {
+  --app-primary: #5E93FF;
+  --app-bg: #F8F9FD;
+  --app-text: #222428;
+  --app-success: #2dd36f;
+  --app-card-bg: #ffffff;
+}
+
+/* Background */
+.app-content {
+  --background: var(--app-bg);
+}
+
+/* --- HEADER STYLES --- */
+.main-toolbar {
+  --background: var(--app-bg);
+  padding-top: 10px;
+  
+  .header-buttons ion-button {
+    --box-shadow: 0 4px 10px rgba(94, 147, 255, 0.2);
+    height: 45px;
+    width: 45px;
+  }
+}
+
+.main-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--app-text);
+  margin: 5px 0 0 0;
+  letter-spacing: -0.5px;
+}
+
+/* Segment/Tabs Pills */
+.segment-wrapper {
+  padding: 0 16px;
+  margin-top: 10px;
+}
+
+ion-segment {
+  background: transparent;
+  
+  ion-segment-button {
+    --indicator-color: var(--app-primary);
+    --color: #888;
+    --color-checked: #fff;
+    --border-radius: 20px;
+    min-height: 36px;
+    margin-right: 8px;
+    font-weight: 600;
+    
+    /* Create the pill shape */
+    &::part(indicator-background) {
+      border-radius: 20px;
+    }
+  }
+}
+
+/* --- TIMELINE STYLES --- */
+.timeline-container {
+  padding: 10px 16px;
+}
+
+.timeline-accordion {
+  background: transparent;
+  margin-bottom: 0;
+  
+  /* The Vertical Line */
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 48px; /* Align with dots */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #E0E4E8;
+    z-index: 0;
+  }
+  
+  /* Hide line for last item */
+  &:last-child::before {
+    display: none;
+  }
+}
+
+.timeline-header {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  align-items: flex-start;
+  padding-bottom: 15px;
+
+  /* The Date Column */
+  .date-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45px;
+    margin-right: 25px; /* Space for the line/dot */
+    z-index: 1;
+    
+    .month { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; }
+    .day { font-size: 20px; color: var(--app-text); font-weight: 800; line-height: 1.2; }
+    .year { font-size: 10px; color: #aaa; }
+  }
+  
+  /* The Content Info */
+  .info-column {
+    background: var(--app-card-bg);
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    position: relative;
+    z-index: 1;
+    margin-top: 5px; /* Align with date */
+    margin-bottom: 5px;
+
+    /* The Dot on the timeline */
+    &::before {
+      content: '';
+      position: absolute;
+      left: -26px; /* Push out to the line */
+      top: 20px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border: 3px solid var(--app-primary);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 5px 0 2px 0;
+    }
+    .summary-text {
+      font-size: 13px;
+      color: #888;
+    }
+  }
+}
+
+/* Specific styling for DONE items */
+.status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: rgba(94, 147, 255, 0.1);
+  color: var(--app-primary);
+  
+  &.done {
+    background: rgba(45, 211, 111, 0.15);
+    color: var(--app-success);
+  }
+}
+
+/* Change Dot Color if Done */
+.status-badge.done ~ h3 { 
+  /* Logic to style parent could be complex in CSS, 
+     so we rely on the badge for visual cue or use ::ng-deep if needed */
+}
+
+/* --- DETAILS (Expanded) --- */
+.timeline-details {
+  padding-left: 60px; /* Indent to align with card */
+  padding-top: 0;
+  padding-bottom: 20px;
+  background: transparent;
+}
+
+.details-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.details-title {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.vax-chip {
+  display: flex;
+  align-items: center;
+  background: #F0F4FF;
+  padding: 8px 12px;
+  border-radius: 12px;
+  color: var(--app-primary);
+  font-weight: 600;
+  font-size: 13px;
+  
+  ion-icon { margin-right: 5px; font-size: 16px; }
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  
+  .empty-icon-circle {
+    width: 100px;
+    height: 100px;
+    background: #eef4ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    
+    ion-icon { font-size: 40px; color: var(--app-primary); }
+  }
+  
+  h3 { font-weight: 700; color: #333; }
+  p { color: #888; max-width: 200px; text-align: center; }
+}
+
+/* --- MODAL STYLES --- */
+.modal-icon-header {
   text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  margin-bottom: 30px;
+  
+  .icon-box {
+    width: 60px;
+    height: 60px;
+    background: rgba(45, 211, 111, 0.1);
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon { font-size: 30px; color: var(--app-success); }
+  }
+  
+  h2 { font-weight: 800; margin: 0; font-size: 22px; }
+  p { color: #888; margin: 5px 0 0 0; }
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+.info-section {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  
+  .info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaa;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    &.warning { color: #ffab00; }
+  }
+  
+  .info-text {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+  }
 }

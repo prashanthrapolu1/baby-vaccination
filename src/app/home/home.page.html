@@ -1,20 +1,211 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<!-- <ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Vaccination Tracker</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-item class="input-card">
+    <ion-label position="stacked">Baby's Birth Date</ion-label>
+    <ion-datetime-button datetime="datetime"></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="datetime" presentation="date" 
+          [(ngModel)]="birthDate" (ionChange)="recalc()"></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <ion-list>
+    <ion-accordion-group>
+      <ion-accordion *ngFor="let item of schedule" [value]="item.id">
+        
+        <ion-item slot="header" [color]="item.isDone ? 'success' : 'light'">
+          <ion-label>
+            <h3>{{ item.ageLabel }}</h3>
+            <p>Due: {{ item.dueDate | date:'mediumDate' }}</p>
+          </ion-label>
+          <ion-icon slot="end" [name]="item.isDone ? 'checkmark-circle' : 'time'"></ion-icon>
+        </ion-item>
+
+        <div class="ion-padding" slot="content">
+          <p class="ion-text-center ion-text-muted"><small>Tap a vaccine for details</small></p>
+          
+          <ion-chip *ngFor="let v of item.vaccines" (click)="openDetails(v)" color="tertiary" outline="true">
+            {{ v }} <ion-icon name="information-circle"></ion-icon>
+          </ion-chip>
+          
+          <br><br>
+          <ion-button expand="block" (click)="toggleDone(item.id)" 
+            [color]="item.isDone ? 'medium' : 'primary'">
+            {{ item.isDone ? 'Mark as Undone' : 'Mark as Given' }}
+          </ion-button>
+        </div>
+
+      </ion-accordion>
+    </ion-accordion-group>
+  </ion-list>
+  <ion-modal [isOpen]="isModalOpen" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.5, 0.75]" (didDismiss)="setModalOpen(false)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ selectedVaccineInfo?.name }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setModalOpen(false)">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="ion-padding">
+        <div *ngIf="selectedVaccineInfo">
+          
+          <ion-item lines="none">
+            <ion-icon name="medkit-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h2>Full Name</h2>
+              <p class="ion-text-wrap">{{ selectedVaccineInfo.full_name }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon name="shield-checkmark-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h2>Protects Against</h2>
+              <p class="ion-text-wrap"><strong>{{ selectedVaccineInfo.protects_against }}</strong></p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="selectedVaccineInfo.side_effects">
+            <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h2>Common Side Effects</h2>
+              <p class="ion-text-wrap">{{ selectedVaccineInfo.side_effects }}</p>
+            </ion-label>
+          </ion-item>
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content> -->
+
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title *ngIf="babies.length === 0">BabyShield: Vaccination Tracker</ion-title>
+    <ion-title *ngIf="babies.length === 1">{{ activeBaby?.name }}'s Tracker</ion-title>
+    
+    <ion-segment *ngIf="babies.length > 1" scrollable [value]="activeBaby?.id">
+      <ion-segment-button *ngFor="let b of babies" [value]="b.id" (click)="selectBaby(b)">
+        <ion-label>{{ b.name }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    
+    <ion-buttons slot="end" *ngIf="activeBaby">
+      <ion-button (click)="editBaby()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddBabyModal()">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="babies.length === 0" class="empty-state ion-text-center">
+    <br><br>
+    <ion-icon name="happy-outline" style="font-size: 60px; color: #ccc;"></ion-icon>
+    <h3>Welcome!</h3>
+    <p>Tap + to add your baby's profile.</p>
   </div>
-</ion-content>
+
+  <ion-list *ngIf="activeBaby">
+  
+  <ion-accordion-group>
+    <ion-accordion *ngFor="let item of schedule" [value]="item.id">
+      
+      <ion-item slot="header" [color]="item.isDone ? 'success' : 'light'">
+        <ion-label>
+          <h3>{{ item.ageLabel }}</h3>
+          <p>Due: {{ item.dueDate | date:'mediumDate' }}</p>
+        </ion-label>
+        
+        <ion-icon slot="end" [name]="item.isDone ? 'checkmark-circle' : 'time'"></ion-icon>
+      </ion-item>
+
+      <div class="ion-padding" slot="content">
+        
+        <p class="ion-text-center ion-text-muted" style="font-size: 0.8rem; margin-top: 0;">
+          <ion-icon name="information-circle-outline"></ion-icon> Tap a vaccine for info
+        </p>
+        
+        <div class="chip-container">
+          <ion-chip *ngFor="let v of item.vaccines" (click)="openDetails(v)" color="tertiary" outline="true">
+            {{ v }}
+          </ion-chip>
+        </div>
+        
+        <br>
+
+        <ion-button expand="block" (click)="toggleDone(item.id)" 
+          [color]="item.isDone ? 'medium' : 'primary'">
+          <ion-icon slot="start" [name]="item.isDone ? 'refresh-outline' : 'checkmark-done-outline'"></ion-icon>
+          {{ item.isDone ? 'Mark as Undone' : 'Mark as Given' }}
+        </ion-button>
+        
+      </div>
+
+    </ion-accordion>
+  </ion-accordion-group>
+  <ion-list style="margin-bottom: 80px;"> 
+
+  </ion-list>
+    <ion-modal [isOpen]="isModalOpen" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.5, 0.75]" (didDismiss)="setModalOpen(false)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ selectedVaccineInfo?.name }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setModalOpen(false)">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="ion-padding">
+        <div *ngIf="selectedVaccineInfo">
+          
+          <ion-item lines="none">
+            <ion-icon name="medkit-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h2>Full Name</h2>
+              <p class="ion-text-wrap">{{ selectedVaccineInfo.full_name }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon name="shield-checkmark-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h2>Protects Against</h2>
+              <p class="ion-text-wrap"><strong>{{ selectedVaccineInfo.protects_against }}</strong></p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="selectedVaccineInfo.side_effects">
+            <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h2>Common Side Effects</h2>
+              <p class="ion-text-wrap">{{ selectedVaccineInfo.side_effects }}</p>
+            </ion-label>
+          </ion-item>
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal> 
+
+</ion-list>
+
+  </ion-content>

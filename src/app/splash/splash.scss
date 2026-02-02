@@ -1,0 +1,61 @@
+// Hide scrollbar
+.no-scroll {
+  --background: none; // Important for the gradient to show
+}
+
+.splash-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  // Professional Gradient (Matches your Shield Icon: Blue to Green)
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.logo-box {
+  margin-bottom: 20px;
+  animation: pulse 2s infinite ease-in-out;
+  
+  img {
+    width: 120px;
+    height: 120px;
+    border-radius: 25px; // Soft rounded corners like iOS
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); // Drop shadow for depth
+  }
+}
+
+.text-box {
+  text-align: center;
+  margin-bottom: 40px;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-top: 5px;
+    font-weight: 300;
+  }
+}
+
+.loader {
+  position: absolute;
+  bottom: 50px;
+}
+
+// Simple "Heartbeat" Animation for the logo
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}

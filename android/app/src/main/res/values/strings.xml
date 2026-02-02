@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Baby Vaccination Tracker</string>
+    <string name="title_activity_main">Baby Vaccination Tracker</string>
+    <string name="package_name">com.prashanth.babytracker</string>
+    <string name="custom_url_scheme">com.prashanth.babytracker</string>
+</resources>
